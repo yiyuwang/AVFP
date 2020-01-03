@@ -1,0 +1,33 @@
+fmriprep-docker /Users/yiyuwang/ImagingData/AVFP/Nifti /Users/yiyuwang/AVFP/BIDS_fmriprep/ participant --participant-label 002 --fs-license-file /Users/yiyuwang/ImagingData/AVFP/freesurfer.txt --ignore slicetiming
+
+
+fmriprep-docker /Users/yiyuwang/ImagingData/AVFP/nifti_test /Users/yiyuwang/ImagingData/AVFP/BIDS_fmriprep/ participant --participant-label 002 --fs-license-file /Users/yiyuwang/Documents/freesurfer.txt --ignore slicetiming --fs-no-reconall --output-space {T1w,template}
+
+
+
+fmriprep-docker /Users/yiyu/Desktop/AVFP_pilot/nifti_test_run2 /Users/yiyu/Desktop/AVFP_pilot/BIDS_fmriprep_test_run2 participant --participant-label 002 --fs-license-file /Users/yiyu/Documents/freesurfer.txt --ignore slicetiming --fs-no-reconall --output-space {T1w,template}
+
+
+
+fmriprep-docker /Users/yiyuwang/ImagingData/AVFP/BIDS_AVFP_pilot1/ /Users/yiyuwang/ImagingData/AVFP/fmriprep_AVFP_pilot1 participant --fs-license-file /Users/yiyuwang/Documents/freesurfer.txt --nthreads 1 --omp-nthreads 2 --low-mem --fs-no-reconall --participant_label 002
+
+
+export PATH=$PATH:/Users/yiyuwang/Library/Python/3.7/bin
+export FS_LICENSE=$HOME/Desktop/restingstate/derivatives/freesurfer.txt
+
+docker run -ti --rm \
+    -v /Users/yiyuwang/ImagingData/AVFP/nifti_test:/data:ro \
+    -v /Users/yiyuwang/AVFP/BIDS_fmriprep_test/:/out \
+    poldracklab/fmriprep:latest \
+    /data /out/out \
+    participant \
+    --ignore fieldmaps
+
+fmriprep-docker /Users/yiyuwang/ImagingData/AVFP/nifti_test /Users/yiyuwang/AVFP/BIDS_fmriprep_test participant
+
+
+fmriprep-docker /Users/yiyuwang/ImagingData/AffVids/ /Users/yiyuwang/ImagingData/AffVids_fmriprep/ participant --participant-label 02 --fs-license-file /Users/yiyuwang/Documents/freesurfer.txt --ignore slicetiming
+
+
+fmriprep-docker /Users/yiyuwang/ImagingData/AffVids/ /Users/yiyuwang/ImagingData/AffVids_fmriprep/ participant --participant-label 02 --fs-license-file /Users/yiyuwang/Documents/freesurfer.txt --ignore slicetiming
+

@@ -1,0 +1,119 @@
+1.
+#Upload BIDS files to discovery cluster:
+scp -r /Users/yiyuwang/ImagingData/AVFP/BIDS/sub-101 wang.yiyu@login.discovery.neu.edu:/scratch/wang.yiyu/AVFP/BIDS
+
+2.
+# change shell script:
+# Change subject number in the output and error directory in 
+1)#SBATCH --output=fmriprep_AVFP_sub###.%j.out
+2)#SBATCH --output=fmriprep_AVFP_sub###.%j.err
+3)participant label
+4)output directory
+5)work
+
+
+# upload shell script to discovery:
+scp /Users/yiyuwang/ImagingData/AVFP/Scripts/Preproc/run_fmriprep.sh wang.yiyu@login.discovery.neu.edu:/scratch/wang.yiyu/AVFP/Scripts
+
+
+scp /Users/yiyuwang/ImagingData/AVFP/Scripts/Preproc/run_fmriprep_101.sh wang.yiyu@login.discovery.neu.edu:/scratch/wang.yiyu/AVFP/Scripts
+
+3.
+# login to discovery:
+ssh wang.yiyu@login.discovery.neu.edu
+
+# make a new output directory for the subject on discovery:
+cd /scratch/wang.yiyu/AVFP/fmriprep/
+mkdir {Subject}
+
+# make a new work directory for the subject on discovery:
+cd /scratch/wang.yiyu/AVFP/work/
+mkdir {Subject}
+
+#Change the output directory in the shell script at:
+/Users/yiyuwang/ImagingData/Scripts/Preproc/run_fmriprep.sh 
+
+# make the script executable.
+chmod +x /scratch/wang.yiyu/AVFP/Scripts/run_fmriprep.sh
+
+# make sure the workaround file is uploaded, if not, use the following: 
+# the workaround file solves the parallel processing issues with fmriprep
+scp /Users/yiyuwang/Dropbox/log/workaround.yml wang.yiyu@login.discovery.neu.edu:/scratch/wang.yiyu/AVFP/misc
+
+# make sure the freesurfer.txt is uploaded:
+scp /Users/yiyuwang/Dropbox/log/freesurfer.txt wang.yiyu@login.discovery.neu.edu:/scratch/wang.yiyu/AVFP/misc
+
+
+
+4.
+# run batch node on the login node:
+sbatch /scratch/wang.yiyu/AVFP/Scripts/run_fmriprep.sh
+sbatch /scratch/wang.yiyu/AVFP/Scripts/run_fmriprep_batch_wrapper.sh
+
+
+Check job status:
+squeue -u $USER
+
+
+
+=======================================================================================
+					Drafts
+=======================================================================================
+* do not need to log in to discovery to this; run this in local terminal
+* scp = secure copy
+* scp = copy files
+* scp -r = copy folder
+
+
+
+scp /Users/yiyuwang/Dropbox/workaround.yml wang.yiyu@login.discovery.neu.edu:/scratch/wang.yiyu/AVFP_pilot
+
+scp -r wang.yiyu@login.discovery.neu.edu:/scratch/wang.yiyu/fmriprep_AVFP_pilot1_test3 /Users/yiyuwang/Dropbox
+
+scp wang.yiyu@login.discovery.neu.edu:/scratch/wang.yiyu/fmriprep_AVFP_pilot.7267926.err /Users/yiyuwang/Dropbox
+
+
+scp /Users/yiyu/Dropbox/fmriprep_AVFP_pilot.sh wang.yiyu@login.discovery.neu.edu:/scratch/wang.yiyu
+
+
+scp /Users/yiyuwang/Dropbox/fmriprep_AVFP_pilot_interactive1.sh wang.yiyu@login.discovery.neu.edu:/scratch/wang.yiyu
+
+srun --pty --export=ALL --partition general --tasks-per-node 1 --nodes 1 --mem=10Gb --time=02:00:00 ~/fmriprep_AVFP_pilot_interactive1.sh
+
+
+fmriprep-docker /scratch/wang.yiyu/AVFP_pilot/Nifti /scratch/wang.yiyu/AVFP_pilot/BIDS_fmriprep participant --participant-label 002 --fs-license-file scratch/wang.yiyu/AVFP_pilot/freesurfer.txt --ignore slicetiming
+
+singularity build /scratch/wang.yiyu/fmriprep-1.5.4.simg docker://poldracklab/fmriprep:1.5.4
+
+
+singularity run /scratch/wang.yiyu/fmriprep-1.5.0.simg /scratch/wang.yiyu/BIDS_AVFP_pilot/1012_AVFP/ /scratch/wang.yiyu/fmriprep_AVFP_pilot/ participant --participant-label 002 -w /scratch/wang.yiyu/AVFP_pilot/work/ --nthreads 8 --fs-license-file /scratch/wang.yiyu/AVFP_pilot/freesurfer.txt --ignore slicetiming --fs-no-reconall --output-space {T1w,template}
+
+
+Running batch node:
+sbath /scratch/wang.yiyu/fmriprep_AVFP_pilot_interactive.sh (your shell script)
+
+
+Interactive Node:
+
+--job-name=fmriprep_pilot002                   # sets the job name
+#SBATCH --exclusive                               # reserves a machine for exclusive use
+#SBATCH --nodes=1                                 # reserves 1 machines
+#SBATCH --tasks-per-node=1                        # sets 1 tasks for each machine
+#SBATCH --cpus-per-task=4                         # sets 4 core for each task
+#SBATCH --mem=100Gb                               # reserves 100 GB memory
+#SBATCH --partition=general                 	  # requests that the job is executed in partition general
+#SBATCH --time=20:00:00                           # reserves machines/cores for 20 hours.
+#SBATCH --output=fmriprep_pilot002.%j.out               # sets the standard output to be stored in file my_nice_job.%j.out, where %j is the job id)
+#SBATCH --error=fmriprep_pilot002.%j.err                # sets the standard error to be stored in file my_nice_job.%j.err, where %j is the job id)
+
+
+srun --pty --export=ALL --partition general --tasks-per-node 1 --nodes 1 --mem=10Gb --time=02:00:00 /scratch/wang.yiyu/script_fmriprep_pilot.sh
+
+
+singularity run /scratch/wang.yiyu/fmriprep-1.5.0.simg /scratch/wang.yiyu/AVFP_pilot/Nifti/ /scratch/wang.yiyu/AVFP_pilot/BIDS_fmriprep/ participant --participant-label 002 -w /scratch/wang.yiyu/AVFP_pilot/work/ --nthreads 8 --fs-license-file /scratch/wang.yiyu/AVFP_pilot/freesurfer.txt --ignore slicetiming --fs-no-reconall --output-space {T1w,template}
+
+/scratch/wang.yiyu/script_fmriprep_pilot.sh
+
+
+srun --pty --export=ALL --partition general --tasks-per-node 1 --nodes 1 --mem=100Gb --time=24:00:00 ~/fmriprep_AVFP_pilot_interactive1.sh
+

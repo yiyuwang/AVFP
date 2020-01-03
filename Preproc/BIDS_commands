@@ -1,0 +1,21 @@
+1.
+# start the nipy/heudiconv docker
+docker pull nipy/heudiconv:latest
+
+2.
+# locate folder and specify subject number for nipy
+docker run --rm -it -v /Users/yiyuwang/ImagingData/AVFP:/base nipy/heudiconv:latest -d /base/data/{subject}/{subject}/Satpute_Wang_{session}_Avfp/*/*.dcm -o /base/BIDS/ -f convertall -s 104 105 -ss 01 -c none --overwrite
+
+
+3.
+# move the dicominfo.tsv to a new folder and rename the tsv to include subject number
+mv /Users/yiyuwang/ImagingData/AVFP/BIDS/.heudiconv/{subject}/info/dicominfo_ses-01.tsv /Users/yiyuwang/ImagingData/AVFP/scan_info/{subject}_dicominfo_ses-01.tsv
+
+mv /Users/yiyuwang/ImagingData/AVFP/BIDS/.heudiconv/105/info/dicominfo_ses-01.tsv /Users/yiyuwang/ImagingData/AVFP/scan_info/105_dicominfo_ses-01.tsv
+
+mv /Users/yiyuwang/ImagingData/AVFP/BIDS/.heudiconv/104/info/dicominfo_ses-01.tsv /Users/yiyuwang/ImagingData/AVFP/scan_info/104_dicominfo_ses-01.tsv
+
+4.
+#
+docker run --rm -it -v /Users/yiyuwang/ImagingData/AVFP:/base nipy/heudiconv:latest -d /base/data/{subject}/{subject}/Satpute_Wang_{session}_Avfp/*/*.dcm -o /base/BIDS/ -f /base/BIDS/code/BIDS_convert_wrapper.py -s 104 105 -ss 01 -c dcm2niix -b --overwrite
+
