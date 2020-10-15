@@ -5,7 +5,7 @@
 # Set Parameters
 
 #subjNo=("106" "108")
-subjNo=("111" "112")
+subjNo=("100")
 #subjNo=("109" "110" "111" "112" "113" "114" "115" "116" "117" "118")
 
 docker pull nipy/heudiconv:latest
